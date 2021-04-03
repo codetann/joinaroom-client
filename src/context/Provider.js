@@ -2,7 +2,9 @@ import React, { useState, createContext, useContext, useEffect } from "react";
 import { v4 as uuid } from "uuid";
 import { io } from "socket.io-client";
 
-const socket = io("localhost:5000");
+const socket = io("localhost:5000", {
+  "sync disconnect on unload": true,
+});
 
 const AppContext = createContext();
 

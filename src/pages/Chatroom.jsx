@@ -28,9 +28,14 @@ export default function Chatroom() {
     inputRef.current.value = "";
   };
 
+  //! FIX: currently reloads page and disconnects user from the socket
+  /* alerts user when they try to reload the page. */
   const handleUnload = (e) => {
+    e.returnValue = "unloading";
     e.preventDefault();
-    alert("hello");
+    socket.emit("test", room);
+    console.log(socket);
+    return "unloading";
   };
 
   //! FIX: on window close send socket message
