@@ -2,11 +2,13 @@
 
 import React, { useEffect, useRef } from "react";
 import { useAppContext } from "../context/Provider";
+import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 
 export default function Chatroom() {
   const inputRef = useRef();
   const endRef = useRef(null);
+  const history = useHistory();
   const { messages, socket, room, id, username } = useAppContext();
 
   /* sends the messages view to the current message at the bottom */
@@ -14,6 +16,7 @@ export default function Chatroom() {
     endRef.current.scrollIntoView({ behavior: "smooth" });
   };
 
+  /* sends message to the server and then to the other chatroom members */
   const handleSend = (e) => {
     e.preventDefault();
     if (inputRef.current.value === "") return;
@@ -28,13 +31,18 @@ export default function Chatroom() {
     inputRef.current.value = "";
   };
 
+  const handleHome = (e) => {
+    e.preventDefault();
+    history.push("/");
+  };
+
   //! FIX: currently reloads page and disconnects user from the socket
   /* alerts user when they try to reload the page. */
   const handleUnload = (e) => {
     e.returnValue = "unloading";
     e.preventDefault();
     socket.emit("test", room);
-    console.log(socket);
+
     return "unloading";
   };
 
@@ -48,6 +56,10 @@ export default function Chatroom() {
 
   return (
     <Container>
+      <Header>
+        <i onClick={handleHome} role="button" className="fas fa-arrow-left"></i>
+        <p>Home</p>
+      </Header>
       <MessagesContainer>
         {messages.map((msg, i) =>
           msg.id === id ? (
@@ -129,6 +141,26 @@ const OtherMessage = styled.p`
   display: flex;
   justify-content: center;
   align-items: center;
+`;
+
+// Back Button
+const Header = styled.div`
+  position: fixed;
+  width: 100%;
+  max-width: 1000px;
+  background: white;
+  height: 5rem;
+  top: 0;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 0 1rem;
+
+  i {
+    font-size: 18px;
+    margin-right: 1rem;
+    cursor: pointer;
+  }
 `;
 
 // Inputs
